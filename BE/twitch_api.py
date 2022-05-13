@@ -9,8 +9,21 @@ class twitch_api():
 
     def __init__(self, path="variables/twitch_variables.json"):
         variables = load_twitch_variables(path)
+
+        if(variables == None):
+            print(f'"twitch_variables.json" was not found. First run? ') 
+            print(f'"twitch_variables.json" has been created but some variables need to be changed.')
+            print(f'Change the incorrect variables before relaunching!')
+            exit()
+
+        self.CLIENT_SECRET = variables["client_secret"]
         self.CLIENT_ID = variables["client_ID"]
         self.BEARER_TOKEN = variables["token"]
+        
+
+        if(self.CLIENT_ID == None or self.CLIENT_SECRET == None):
+            print(f"ERROR!!! Client Secret({self.CLIENT_SECRET}) or ID({self.CLIENT_ID}) is Missing???")
+            exit()
 
 
     def get_game_ID(self, game_name):
