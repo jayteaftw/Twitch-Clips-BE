@@ -40,18 +40,27 @@ class twitch_api():
                                     })
         return message.json()['data'][0]["id"]
 
-    def get_game_clips(self, game_ID, time_start, time_end=None, clip_count=100):
-        message = requests.get( url=f'https://api.twitch.tv/helix/clips?game_id={time_start}&started_at={time_start}&first={clip_count}' + ("" if not time_end else "&ended_at={time_end}"), 
-                            headers={   "Authorization":"Bearer "+self.BEARER_TOKEN,
-                                        "client-Id": self.CLIENT_ID,
-                                    })
+    def get_game_clips(self, game_ID, time_start, time_end=None, clip_count=100, cursor=None):
+
+        url = f'https://api.twitch.tv/helix/clips?game_id={game_ID}&started_at={time_start}&first={clip_count}'\
+                + ("" if not time_end else f"&ended_at={time_end}") \
+                + ("" if not cursor else f"&after={cursor}")
+                
+        message = requests.get( url=url, 
+                                headers={   "Authorization":"Bearer "+self.BEARER_TOKEN,
+                                            "client-Id": self.CLIENT_ID
+                                        })
         return message
     
-    def get_user_clips(self, user_ID, time_start, time_end=None, clip_count=100):
-        message = requests.get( url=f'https://api.twitch.tv/helix/clips?broadcaster_id={user_ID}&started_at={time_start}&first={clip_count}'+ ("" if not time_end else f"&ended_at={time_end}"), 
-                            headers={   "Authorization":"Bearer "+self.BEARER_TOKEN,
-                                        "client-Id": self.CLIENT_ID,
-                                    })
+    def get_user_clips(self, user_ID, time_start, time_end=None, clip_count=100, return_limit=False, cursor=None):
+        url = f'https://api.twitch.tv/helix/clips?broadcaster_id={user_ID}&started_at={time_start}&first={clip_count}' \
+                + ("" if not time_end else f"&ended_at={time_end}") \
+                + ("" if not cursor else f"&after={cursor}")
+
+        message = requests.get( url=url, 
+                                headers={   "Authorization":"Bearer "+self.BEARER_TOKEN,
+                                            "client-Id": self.CLIENT_ID
+                                        })
         return message
 
     def convert_time_RC3339(self,year, month, day, hour, minutes, seconds):
@@ -74,7 +83,8 @@ if __name__ == "__main__":
 
     game_id = twitch_api.get_game_ID("VALORANT")
 
-    message = twitch_api.get_user_clips(broadcast_ID, time_start, time_ended)
+    #message = twitch_api.get_user_clips(broadcast_ID, time_start, time_ended)
+    message = twitch_api.get_game_clips(game_id, time_start, time_ended)
 
     print(message.json())
 
@@ -90,4 +100,14 @@ if __name__ == "__main__":
     x = datetime.datetime.strptime(time, '%Y-%m-%dT%H:%M:%SZ')
     print(x.time)
 
-    
+    exit()
+    count = 0
+    cursor = None
+    while count < 5:
+        message = twitch_api.get_user_clips(broadcast_ID, time_start, time_ended, cursor=cursor).json()
+        data = message['data']
+        #print(data)
+        cursor = message['pagination']['cursor']
+        print(cursor)
+        if cursor == None: break
+        count += 1
