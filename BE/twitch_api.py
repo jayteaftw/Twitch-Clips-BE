@@ -48,14 +48,15 @@ class twitch_api():
         return message
     
     def get_user_clips(self, user_ID, time, clip_count=100):
-        message = requests.get( url=f'https://api.twitch.tv/helix/clips?broadcaster_id={user_ID}&started_at=2022-05-10T00:00:00Z&first={clip_count}', 
+        message = requests.get( url=f'https://api.twitch.tv/helix/clips?broadcaster_id={user_ID}&started_at={time}&first={clip_count}', 
                             headers={   "Authorization":"Bearer "+self.BEARER_TOKEN,
                                         "client-Id": self.CLIENT_ID,
                                     })
         return message
 
     def convert_time_RC3339(self,year, month, day, hour, minutes, seconds):
-        return f'{year}-{month}-{day}T{hour}:{minutes}:{seconds}Z'
+        f = lambda x: str(x).zfill(2)
+        return f'{f(year)}-{f(month)}-{f(day)}T{f(hour)}:{f(minutes)}:{f(seconds)}Z'
 
 
 if __name__ == "__main__":
@@ -65,9 +66,9 @@ if __name__ == "__main__":
     twitch_api = twitch_api()
 
 
-    broadcast_ID = twitch_api.get_user_ID("loltyler1")
+    broadcast_ID = twitch_api.get_user_ID("tarik")
 
-    time = twitch_api.convert_time_RC3339(2020,5,11,00,00,00)
+    time = twitch_api.convert_time_RC3339(2022,5,9,"0","0","0")
 
     game_id = twitch_api.get_game_ID("VALORANT")
 
