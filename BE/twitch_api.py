@@ -40,15 +40,15 @@ class twitch_api():
                                     })
         return message.json()['data'][0]["id"]
 
-    def get_game_clips(self, game_ID, time, clip_count=100):
-        message = requests.get( url=f'https://api.twitch.tv/helix/clips?game_id={game_id}&started_at=2022-05-10T00:00:00Z&first={clip_count}', 
+    def get_game_clips(self, game_ID, time_start, time_end=None, clip_count=100):
+        message = requests.get( url=f'https://api.twitch.tv/helix/clips?game_id={time_start}&started_at={time_start}&first={clip_count}' + ("" if not time_end else "&ended_at={time_end}"), 
                             headers={   "Authorization":"Bearer "+self.BEARER_TOKEN,
                                         "client-Id": self.CLIENT_ID,
                                     })
         return message
     
-    def get_user_clips(self, user_ID, time, clip_count=100):
-        message = requests.get( url=f'https://api.twitch.tv/helix/clips?broadcaster_id={user_ID}&started_at={time}&first={clip_count}', 
+    def get_user_clips(self, user_ID, time_start, time_end=None, clip_count=100):
+        message = requests.get( url=f'https://api.twitch.tv/helix/clips?broadcaster_id={user_ID}&started_at={time_start}&first={clip_count}'+ ("" if not time_end else f"&ended_at={time_end}"), 
                             headers={   "Authorization":"Bearer "+self.BEARER_TOKEN,
                                         "client-Id": self.CLIENT_ID,
                                     })
@@ -68,11 +68,13 @@ if __name__ == "__main__":
 
     broadcast_ID = twitch_api.get_user_ID("tarik")
 
-    time = twitch_api.convert_time_RC3339(2022,5,9,"0","0","0")
+    time_start = twitch_api.convert_time_RC3339(2022,5,9,"0","0","0")
+
+    time_ended = twitch_api.convert_time_RC3339(2022,5,9,"2","0","0")
 
     game_id = twitch_api.get_game_ID("VALORANT")
 
-    message = twitch_api.get_user_clips(broadcast_ID, time)
+    message = twitch_api.get_user_clips(broadcast_ID, time_start, time_ended)
 
     print(message.json())
 
