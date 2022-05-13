@@ -16,7 +16,7 @@ class twitch_api():
             print(f'Change the incorrect variables before relaunching!')
             exit()
 
-        self.CLIENT_SECRET = variables["client_secret"]
+        self.CLIENT_SECRET = variables["client_secret"] 
         self.CLIENT_ID = variables["client_ID"]
         self.BEARER_TOKEN = variables["token"]
         
@@ -33,9 +33,22 @@ class twitch_api():
                                     })
         return message.json()['data'][0]["id"]
 
+    def get_user_ID(self, user_name):
+        message = requests.get( url=f"https://api.twitch.tv/helix/users?login={user_name}", 
+                            headers={   "Authorization":"Bearer "+self.BEARER_TOKEN,
+                                        "client-Id": self.CLIENT_ID
+                                    })
+        return message.json()['data'][0]["id"]
 
     def get_game_clips(self, game_ID, time, clip_count=100):
-        message = requests.get( url=f'https://api.twitch.tv/helix/clips?game_id={game_id}&started_at=2022-05-10T00:00:00Z&first=50', 
+        message = requests.get( url=f'https://api.twitch.tv/helix/clips?game_id={game_id}&started_at=2022-05-10T00:00:00Z&first={clip_count}', 
+                            headers={   "Authorization":"Bearer "+self.BEARER_TOKEN,
+                                        "client-Id": self.CLIENT_ID,
+                                    })
+        return message
+    
+    def get_user_clips(self, user_ID, time, clip_count=100):
+        message = requests.get( url=f'https://api.twitch.tv/helix/clips?broadcaster_id={user_ID}&started_at=2022-05-10T00:00:00Z&first={clip_count}', 
                             headers={   "Authorization":"Bearer "+self.BEARER_TOKEN,
                                         "client-Id": self.CLIENT_ID,
                                     })
@@ -51,11 +64,14 @@ if __name__ == "__main__":
 
     twitch_api = twitch_api()
 
+
+    broadcast_ID = twitch_api.get_user_ID("loltyler1")
+
     time = twitch_api.convert_time_RC3339(2020,5,11,00,00,00)
 
     game_id = twitch_api.get_game_ID("VALORANT")
 
-    message = twitch_api.get_game_clips(game_id, None, time)
+    message = twitch_api.get_user_clips(broadcast_ID, time)
 
     print(message.json())
 
@@ -70,3 +86,5 @@ if __name__ == "__main__":
     time  = message.json()['data'][0]['created_at']
     x = datetime.datetime.strptime(time, '%Y-%m-%dT%H:%M:%SZ')
     print(x.time)
+
+    
