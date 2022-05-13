@@ -3,16 +3,14 @@ import datetime
 from lib import load_twitch_variables
 
 
-
-
 class twitch_api():
     CLIENT_ID = None
     BEARER_TOKEN = None
 
     def __init__(self, path="variables/twitch_variables.json"):
-        data = load_twitch_variables(path)
-        self.CLIENT_ID = data["client_ID"]
-        self.BEARER_TOKEN = data["token"]
+        variables = load_twitch_variables(path)
+        self.CLIENT_ID = variables["client_ID"]
+        self.BEARER_TOKEN = variables["token"]
 
 
     def get_game_ID(self, game_name):
@@ -23,7 +21,7 @@ class twitch_api():
         return message.json()['data'][0]["id"]
 
 
-    def get_clips(self, game_ID, broadcaster_ID, time, clip_count=100):
+    def get_game_clips(self, game_ID, time, clip_count=100):
         message = requests.get( url=f'https://api.twitch.tv/helix/clips?game_id={game_id}&started_at=2022-05-10T00:00:00Z&first=50', 
                             headers={   "Authorization":"Bearer "+self.BEARER_TOKEN,
                                         "client-Id": self.CLIENT_ID,
@@ -44,7 +42,7 @@ if __name__ == "__main__":
 
     game_id = twitch_api.get_game_ID("VALORANT")
 
-    message = twitch_api.get_clips(game_id, None, time)
+    message = twitch_api.get_game_clips(game_id, None, time)
 
     print(message.json())
 
