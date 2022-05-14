@@ -67,6 +67,12 @@ class twitch_api():
         f = lambda x: str(x).zfill(2)
         return f'{f(year)}-{f(month)}-{f(day)}T{f(hour)}:{f(minutes)}:{f(seconds)}Z'
 
+    def token_refresh(self):
+        url =   f"https://id.twitch.tv/oauth2/token?client_id={self.CLIENT_ID}" + \
+                f"&client_secret={self.CLIENT_SECRET}&grant_type=client_credentials"
+        message = requests.post(url=url)
+
+        self.BEARER_TOKEN = message.json()['access_token']
 
 if __name__ == "__main__":
     
