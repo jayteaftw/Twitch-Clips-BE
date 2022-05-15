@@ -24,10 +24,11 @@ class twitch_api():
         if self.BEARER_TOKEN == None:
             self.token_refresh()
             variables = load_twitch_variables(path)
+        
+        self.EXPIRATION_DATE = variables["expiration_date"]
 
-        print(variables["expiration_date"])
-        expiration_date = datetime.fromisoformat(variables["expiration_date"])
-        if expiration_date < datetime.now() - timedelta(days=1):
+        expiration_date = datetime.fromisoformat(self.EXPIRATION_DATE)
+        if expiration_date- timedelta(days=1) < datetime.now() :
             self.token_refresh()
 
         if(self.CLIENT_ID == None or self.CLIENT_SECRET == None):
@@ -87,12 +88,8 @@ class twitch_api():
         upload_refresh_token(self.BEARER_TOKEN, creation_date, message.json()['expires_in'])
 
 if __name__ == "__main__":
-    
-
 
     twitch_api = twitch_api()
-
-
 
     broadcast_ID = twitch_api.get_user_ID("tarik")
 
