@@ -1,6 +1,6 @@
 import requests
-import datetime
-from lib import load_twitch_variables
+from datetime import datetime, timedelta
+from lib import load_twitch_variables, upload_refresh_token
 
 
 class twitch_api():
@@ -20,6 +20,15 @@ class twitch_api():
         self.CLIENT_ID = variables["client_ID"]
         self.BEARER_TOKEN = variables["token"]
         
+        print(variables)
+        if self.BEARER_TOKEN == None:
+            self.token_refresh()
+            variables = load_twitch_variables(path)
+
+        print(variables["expiration_date"])
+        expiration_date = datetime.fromisoformat(variables["expiration_date"])
+        if expiration_date < datetime.now() - timedelta(days=1):
+            self.token_refresh()
 
         if(self.CLIENT_ID == None or self.CLIENT_SECRET == None):
             print(f"ERROR!!! Client Secret({self.CLIENT_SECRET}) or ID({self.CLIENT_ID}) is Missing???")
@@ -72,13 +81,17 @@ class twitch_api():
                 f"&client_secret={self.CLIENT_SECRET}&grant_type=client_credentials"
         message = requests.post(url=url)
 
+        creation_date = datetime.now()
+        print(message.json())
         self.BEARER_TOKEN = message.json()['access_token']
+        upload_refresh_token(self.BEARER_TOKEN, creation_date, message.json()['expires_in'])
 
 if __name__ == "__main__":
     
 
 
     twitch_api = twitch_api()
+
 
 
     broadcast_ID = twitch_api.get_user_ID("tarik")
@@ -94,16 +107,16 @@ if __name__ == "__main__":
 
     print(message.json())
 
-    b = datetime.datetime(2021,1,1)
+    b = datetime(2021,1,1)
 
     for i in message.json()['data']:
-        if datetime.datetime.strptime(i["created_at"], '%Y-%m-%dT%H:%M:%SZ') > b:
+        if datetime.strptime(i["created_at"], '%Y-%m-%dT%H:%M:%SZ') > b:
             print(i['id'], "\t", i["created_at"], i["url"], i["language"] )
 
     print(message.json()['data'][0])
 
     time  = message.json()['data'][0]['created_at']
-    x = datetime.datetime.strptime(time, '%Y-%m-%dT%H:%M:%SZ')
+    x = datetime.strptime(time, '%Y-%m-%dT%H:%M:%SZ')
     print(x.time)
 
     exit()
