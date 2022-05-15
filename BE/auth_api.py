@@ -7,7 +7,8 @@ class auth_API(Resource):
 
     def post():
         pass
-
+    
+    #Finds new user in DB
     def get():
         pass
 

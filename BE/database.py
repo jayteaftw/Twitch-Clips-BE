@@ -2,15 +2,15 @@
 
 class database():
 
-    def __init__():
+    def __init__(self):
         pass
 
-    def insert(table_name, data):
+    def insert(self, table_name, data):
         pass
 
-    def query(table_name, data):
+    def query(self, table_name, data):
         pass
 
-    def all_tags():
+    def all_tags(self):
         pass
     
