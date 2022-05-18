@@ -2,12 +2,20 @@ from pickle import NONE
 from query_api import query_API
 from auth_api import auth_API
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api
 from lib import load_flask_variables
 
 
+#I guess this file needs to be renamed as __init__.py to make BE a package
+db = SQLAlchemy()
+DB_NAME = "database.db"
+
+
 def create_api():
     app = Flask(__name__)
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
+    db.init_app(app)
     api = Api(app)
 
     env_variables = load_flask_variables()
