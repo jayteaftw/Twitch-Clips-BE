@@ -40,7 +40,7 @@ def get_clips(user_id, tags): #user_id: int, tags: string
 				urls.append(r_url)
 				dates.append(r_date)
 				games.append(r_game_name)
-		return urls, games, dates
+		return urls #, games, dates
 		'''
 
 	else:
@@ -62,11 +62,11 @@ def get_clips(user_id, tags): #user_id: int, tags: string
 			for entry in message.json()['data']:
 				entry_id = entry['id']
 				entry_ts = entry['created_at'] # string type
-				entry_url = entry['url']
+				entry_embed_url = entry['embed_url']
 				entry_thumbnail_url = entry['thumbnail_url']
 				entry_game_id = entry['game_id']
 				#print("ID :" + str(entry_id) + ", TS: " + str(entry_ts) + ", URL: " + str(entry_url) + " THUMBNAIL: " + str(entry_thumbnail_url))
-				urls.append(entry_url)
+				urls.append(entry_embed_url)
 				dates.append(entry_ts)
 				thumbnail_urls.append(entry_thumbnail_url)
 				games.append(game)
@@ -84,7 +84,7 @@ def get_clips(user_id, tags): #user_id: int, tags: string
 		#print(dates)
 		if not urls and not games and not dates:
 			return "ERROR: bad connection with DB"
-		return urls, games, dates
+		return urls #, games, dates
 
 	'''
 	try:
