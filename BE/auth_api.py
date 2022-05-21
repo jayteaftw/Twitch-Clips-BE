@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from .db_models import User
 from werkzeug.security import generate_password_hash, check_password_hash
-from run.py import db
+from . import db
 from flask_login import login_user, login_required, logout_user, current_user
 
 
@@ -47,7 +47,7 @@ def sign_up():
         email = request.form.get('email')
         first_name = request.form.get('firstName')
         password1 = request.form.get('password1')
-        password2 = request.form.get('password2')
+        #password2 = request.form.get('password2')
 
         user = User.query.filter_by(email=email).first()
         if user:
