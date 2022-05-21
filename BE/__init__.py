@@ -16,6 +16,18 @@ def create_api():
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
     db.init_app(app)
     api = Api(app)
+    app.register_blueprint(auth_api, url_prefix='/')
+    from .db_models import User, Tag, Twitch_URL
+
+    create_database(app)
+
+    login_manager = LoginManager()
+    login_manager.login_view = 'auth_api.login'
+    login_manager.init_app(app)
+
+    @login_manager.user_loader
+    def load_user(id):
+        return User.query.get(int(id))
 
     env_variables = load_flask_variables()
 
@@ -30,7 +42,16 @@ def create_api():
 
 
     api.add_resource(query_API, "/query")
+    
     return app, IP, PORT
+
+
+
+
+def create_database(app):
+    if not path.exists('BE/' + DB_NAME):
+        db.create_all(app=app)
+        print('Created Database!')
 
 
 if __name__ == "__main__":

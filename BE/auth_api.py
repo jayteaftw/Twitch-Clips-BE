@@ -5,7 +5,7 @@ from . import db
 from flask_login import login_user, login_required, logout_user, current_user
 
 
-auth = Blueprint('auth_api', __name__)
+auth_api = Blueprint('auth_api', __name__)
 
 
 @views.route('/', methods=['GET', 'POST'])
@@ -17,8 +17,8 @@ def home():
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
+        email = request.form.get('Email')
+        password = request.form.get('Password')
 
         user = User.query.filter_by(email=email).first()
         if user:
@@ -44,7 +44,7 @@ def logout():
 @auth.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
     if request.method == 'POST':
-        email = request.form.get('email')
+        email = request.form.get('Email')
         first_name = request.form.get('firstName')
         password1 = request.form.get('password1')
         #password2 = request.form.get('password2')
