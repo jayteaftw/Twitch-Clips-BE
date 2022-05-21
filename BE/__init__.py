@@ -1,6 +1,5 @@
 from pickle import NONE
 from query_api import query_API
-from auth_api import auth_API
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api
@@ -31,7 +30,6 @@ def create_api():
 
 
     api.add_resource(query_API, "/query")
-    api.add_resource(auth_API, "/auth")
     return app, IP, PORT
 
 
