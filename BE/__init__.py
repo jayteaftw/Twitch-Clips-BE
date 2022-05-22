@@ -26,7 +26,6 @@ def create_api():
     PORT = env_variables["port"]
 
 
-    api.add_resource(query_API, "/query")
     api.add_resource(auth_API, "/auth")
     
     return app, IP, PORT

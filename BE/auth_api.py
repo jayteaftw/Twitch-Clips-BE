@@ -54,16 +54,19 @@ def query():
         print(request)
         args = request.json
         print(args)
+        data = "https://clips.twitch.tv/embed?clip=IcySparklyPieBCWarrior-uc8jRlxGER684i-2, https://clips.twitch.tv/embed?clip=IgnorantSourBulgogiKappa-aOypuRSQhb1da0MW, https://clips.twitch.tv/embed?clip=StormyTentativeGooseNerfBlueBlaster-fz6AoxMLgYa1bK4K, https://clips.twitch.tv/embed?clip=SingleDrabTigerKAPOW-psNF6qOiQWIFMvC9"
+        return {"links":data}, 200
         return {"recived": "true"}, 200
+    
+
+
+@example_blueprint.route('/querytwo', methods=['GET', 'POST'])
+def querytwo():
     #Otherwirse GET
+    args = request.json
     print("links")
-    return {"links": ["https://clips.twitch.tv/embed?clip=IcySparklyPieBCWarrior-uc8jRlxGER684i-2",
-				"https://clips.twitch.tv/embed?clip=IgnorantSourBulgogiKappa-aOypuRSQhb1da0MW"
-				]}
-
-
-
-
+    data = "https://clips.twitch.tv/embed?clip=IcySparklyPieBCWarrior-uc8jRlxGER684i-2, https://clips.twitch.tv/embed?clip=IgnorantSourBulgogiKappa-aOypuRSQhb1da0MW, https://clips.twitch.tv/embed?clip=StormyTentativeGooseNerfBlueBlaster-fz6AoxMLgYa1bK4K, https://clips.twitch.tv/embed?clip=SingleDrabTigerKAPOW-psNF6qOiQWIFMvC9"
+    return {"links":data}, 200
 
 
 
