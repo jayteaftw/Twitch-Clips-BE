@@ -1,11 +1,75 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
-from db_models import User
-from werkzeug.security import generate_password_hash, check_password_hash
-from . import db
-from flask_login import login_user, login_required, logout_user, current_user
+from flask import request, render_template, Blueprint
+from flask_restful import Api, Resource, reqparse
+
+auth_post_args = reqparse.RequestParser()
+auth_post_args.add_argument("email",    help="oAuth key for clinician access",            required=True)
+auth_post_args.add_argument("password",   help="oAuth key's date in ObjectID form",         required=True)
+
+auth_get_args = reqparse.RequestParser()
+auth_get_args.add_argument("email",    help="oAuth key for clinician access",            required=True)
+auth_get_args.add_argument("password",   help="oAuth key's date in ObjectID form",         required=True)
 
 
-auth_api = Blueprint('auth_api', __name__)
+class auth_API(Resource):
+
+    def get(self):
+        args = auth_post_args.parse_args()
+        email = args["email"]
+        password = args["password"]
+        print(email, password)
+        return {"email": email, "password": password}, 200
+    
+    def post(self):
+        language = request.args.get('language')
+        password = request.args.get("password")
+        content_type = request.headers.get('Content-Type')
+        if (content_type == 'application/json'):
+            print("here")
+            json = request.json
+            print("here")
+            print(json)
+        print(password)
+        print(language)
+        return {"hello":"yes"}, 200
+    
+    def delete(self):
+        pass
+
+    def patch(self):
+        pass
+
+example_blueprint = Blueprint('example_blueprint', __name__)
+
+@example_blueprint.route('/signIn', methods=['GET', 'POST'])
+def signIn():
+    print(request)
+    args = request.json
+    print(args)
+    return {"token": "00000000"}, 200
+
+
+@example_blueprint.route('/query', methods=['GET', 'POST'])
+def query():
+    if request.method == 'POST':
+        print(request)
+        args = request.json
+        print(args)
+        return {"recived": "true"}, 200
+    #Otherwirse GET
+    print("links")
+    return {"links": ["https://clips.twitch.tv/embed?clip=IcySparklyPieBCWarrior-uc8jRlxGER684i-2",
+				"https://clips.twitch.tv/embed?clip=IgnorantSourBulgogiKappa-aOypuRSQhb1da0MW"
+				]}
+
+
+
+
+
+
+
+
+
+""" auth_API = Blueprint('auth_api', __name__)
 
 
 @views.route('/', methods=['GET', 'POST'])
@@ -86,23 +150,8 @@ def tag_select():
             db.session.commit() 
             login_user(new_user_tag, remember = True)
             flash('User tags selected!', category='success')
-            return redirect(url_for('auth_api.home'))
+            return redirect(url_for('auth_api.home')) """
 
 
-"""
-class auth_API(Resource):
 
-    def post():
-        pass
-    
-    #Finds new user in DB
-    def get():
-        pass
 
-    def delete():
-        pass
-
-    def patch():
-        pass
-
-"""

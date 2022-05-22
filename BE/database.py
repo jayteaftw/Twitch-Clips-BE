@@ -1,6 +1,6 @@
 
 
-class database():
+class mySQLdatabase():
 
     def __init__(self):
         pass
