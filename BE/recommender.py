@@ -49,16 +49,6 @@ def get_clips(database_inst, user_id, tags, date_comp): #user_id: int, tags: str
 			for row in result:
 				urls.append(row[1])
 			'''
-			
-			''' SQL ALCHEMY IMPLEMENTATION
-			for tag in tags_list:
-				db_query = Twitch_URL.query.filter_By(game_name = tag).order_by(date).limit(30)
-				for r_url, r_date, r_tag_id, r_game_name in db_query:
-					urls.append(r_url)
-					#dates.append(r_date)
-					#games.append(r_game_name)
-			return urls
-			'''
 
 
 		else:
@@ -86,17 +76,13 @@ def get_clips(database_inst, user_id, tags, date_comp): #user_id: int, tags: str
 				#games.append(game)
 
 				insert_query = insert_Twitch_URL % (entry_embed_url, entry_ts, entry_game_id, game)
-				print("INSERT QUERY: " + str(insert_query))
-				#database_inst.insert(insert_query)
+				#print((entry_embed_url, entry_ts, entry_game_id, game))
+				#print("INSERT QUERY: " + str(insert_query))
+				#database_inst.insert("Twitch_URL", (entry_embed_url, entry_ts, entry_game_id, game))
 
-				'''SQL ALCHEMY IMPLEMENTATION'''
-				#twitch_url_entry = Twitch_URL(url = str(entry_embed_url), date = entry_ts2, tag_id = entry_game_id, game_name = game)
-				#db.session.add(twitch_url_entry)
-				#db.session.commit()
-
-		if not urls: 
-			print("ERROR: NO DATA FOUND\n")
-			return {"data": "None"}, 404
+	if not urls: 
+		print("ERROR: NO DATA FOUND\n")
+		return {"data": "None"}, 404
 	#print("URLS: " + str(urls))
 	return urls #, games, dates
 
