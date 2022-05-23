@@ -33,6 +33,7 @@ def signUp():
 def selection():
     args = request.json
     data = ""
+    print(args["categories"])
     if db.checkIfValidUser(args["email"], args["token"]):
         db.setUserCategories(args["categories"], ["email"])
         data = recommend(args["email"])
