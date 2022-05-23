@@ -4,30 +4,15 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api
 from lib import load_flask_variables
-
-
-#I guess this file needs to be renamed as __init__.py to make BE a package
-db = SQLAlchemy()
-DB_NAME = "database.db"
+from auth_api import auth_API, example_blueprint
+from flask_cors import CORS
 
 
 def create_api():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
-    db.init_app(app)
+    app.register_blueprint(example_blueprint)
+    CORS(app)
     api = Api(app)
-    app.register_blueprint(auth_api, url_prefix='/')
-    from .db_models import User, Tag, Twitch_URL
-
-    create_database(app)
-
-    login_manager = LoginManager()
-    login_manager.login_view = 'auth_api.login'
-    login_manager.init_app(app)
-
-    @login_manager.user_loader
-    def load_user(id):
-        return User.query.get(int(id))
 
     env_variables = load_flask_variables()
 
@@ -41,17 +26,11 @@ def create_api():
     PORT = env_variables["port"]
 
 
-    api.add_resource(query_API, "/query")
+    api.add_resource(auth_API, "/auth")
     
     return app, IP, PORT
 
 
-
-
-def create_database(app):
-    if not path.exists('BE/' + DB_NAME):
-        db.create_all(app=app)
-        print('Created Database!')
 
 
 if __name__ == "__main__":

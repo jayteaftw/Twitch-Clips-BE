@@ -1,6 +1,6 @@
-
 from __init__ import db
 class database():
+  
     cur = db.cursor()
     def __init__(self):
         # maybe add DB creation and Tables creation part here
