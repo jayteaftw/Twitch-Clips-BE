@@ -37,8 +37,15 @@ class database():
     #def all_tags(self):
         #pass """
 
+    def generateNewToken(self, email):
+        """ Generate new token for user with email """
+        return True
 
-    def checkIfValidUser(self,email, password):
+    def checkIfValidUser(self, email, token):
+        """ Check if user is valid with specific token. Return true or false """
+        return True
+
+    def checkIfValidUserPass(self,email, password):
         """ If User is valid return a generated token
         If not return False """
         
@@ -59,3 +66,8 @@ class database():
         "Return a list of all categories"
 
         return ["Valorant", "CSGO", "League of Legends", "Minecraft", "Apex Legends", "Call of Duty WarZone", "Among Us", "Dota 2", "World of Warcraft" ]
+
+
+    def setUserCategories(self, categories, email):
+        "Takes categories and insert them into specific user cell"
+        return True
