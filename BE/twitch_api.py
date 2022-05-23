@@ -108,7 +108,7 @@ if __name__ == "__main__":
 
     for i in message.json()['data']:
         if datetime.strptime(i["created_at"], '%Y-%m-%dT%H:%M:%SZ') > b:
-            print(i['id'], "\t", i["created_at"], i["url"], i["language"] )
+            print(i['id'], "\t", i["created_at"], i["embed_url"], i["language"] )
 
     print(message.json()['data'][0])
 
