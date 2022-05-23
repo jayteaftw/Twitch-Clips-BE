@@ -86,9 +86,9 @@ def get_clips(database_inst, user_id, tags, date_comp): #user_id: int, tags: str
 	#print("URLS: " + str(urls))
 	return urls #, games, dates
 
-def recommend(userId):
-	
-	pass
+def recommend(email):
+	"Return recommended clips based off of user categories from db"
+	return "https://clips.twitch.tv/embed?clip=StylishAmericanPepperoniPJSugar-73riKqxnVTKoGsxI, https://clips.twitch.tv/embed?clip=StormyTentativeGooseNerfBlueBlaster-fz6AoxMLgYa1bK4K, https://clips.twitch.tv/embed?clip=SleepyConsiderateCurryRuleFive-YxNspoxXoNAqxhCA"
 
 if __name__ == "__main__":
 	print("__________________________")
