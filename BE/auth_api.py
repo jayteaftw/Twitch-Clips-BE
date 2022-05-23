@@ -45,7 +45,7 @@ def signIn():
     print(request)
     args = request.json
     print(args)
-    return {"token": "00000000"}, 200
+    return {"token": "00000000", "email":args["email"]}, 200
 
 
 @example_blueprint.route('/query', methods=['GET', 'POST'])
@@ -56,13 +56,11 @@ def query():
         print(args)
         data = "https://clips.twitch.tv/embed?clip=IcySparklyPieBCWarrior-uc8jRlxGER684i-2, https://clips.twitch.tv/embed?clip=IgnorantSourBulgogiKappa-aOypuRSQhb1da0MW, https://clips.twitch.tv/embed?clip=StormyTentativeGooseNerfBlueBlaster-fz6AoxMLgYa1bK4K, https://clips.twitch.tv/embed?clip=SingleDrabTigerKAPOW-psNF6qOiQWIFMvC9"
         return {"links":data}, 200
-        return {"recived": "true"}, 200
     
 
 
 @example_blueprint.route('/querytwo', methods=['GET', 'POST'])
 def querytwo():
-    #Otherwirse GET
     args = request.json
     print("links")
     data = "https://clips.twitch.tv/embed?clip=IcySparklyPieBCWarrior-uc8jRlxGER684i-2, https://clips.twitch.tv/embed?clip=IgnorantSourBulgogiKappa-aOypuRSQhb1da0MW, https://clips.twitch.tv/embed?clip=StormyTentativeGooseNerfBlueBlaster-fz6AoxMLgYa1bK4K, https://clips.twitch.tv/embed?clip=SingleDrabTigerKAPOW-psNF6qOiQWIFMvC9"
