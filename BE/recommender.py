@@ -86,6 +86,10 @@ def get_clips(database_inst, user_id, tags, date_comp): #user_id: int, tags: str
 	#print("URLS: " + str(urls))
 	return urls #, games, dates
 
+def recommend(userId):
+	
+	pass
+
 if __name__ == "__main__":
 	print("__________________________")
 	print("QUERY FROM DB TEST: \n")

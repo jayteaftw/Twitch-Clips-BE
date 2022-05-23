@@ -4,13 +4,13 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api
 from lib import load_flask_variables
-from auth_api import auth_API, example_blueprint
+from auth_api import api_blueprint
 from flask_cors import CORS
 
 
 def create_api():
     app = Flask(__name__)
-    app.register_blueprint(example_blueprint)
+    app.register_blueprint(api_blueprint)
     CORS(app)
     api = Api(app)
 
@@ -24,9 +24,6 @@ def create_api():
 
     IP = env_variables["ip"]
     PORT = env_variables["port"]
-
-
-    api.add_resource(auth_API, "/auth")
     
     return app, IP, PORT
 

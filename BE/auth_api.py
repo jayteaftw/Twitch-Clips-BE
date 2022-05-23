@@ -1,16 +1,53 @@
-from flask import request, render_template, Blueprint
-from flask_restful import Api, Resource, reqparse
+from flask import request, Blueprint
+from flask_restful import reqparse
+from recommender import get_clips
+from database import database
 
-auth_post_args = reqparse.RequestParser()
-auth_post_args.add_argument("email",    help="oAuth key for clinician access",            required=True)
-auth_post_args.add_argument("password",   help="oAuth key's date in ObjectID form",         required=True)
-
-auth_get_args = reqparse.RequestParser()
-auth_get_args.add_argument("email",    help="oAuth key for clinician access",            required=True)
-auth_get_args.add_argument("password",   help="oAuth key's date in ObjectID form",         required=True)
+api_blueprint = Blueprint('api_blueprint', __name__)
+db = database()
 
 
-class auth_API(Resource):
+@api_blueprint.route('/signIn', methods=['GET', 'POST'])
+def signIn():
+    args = request.json
+    print(args)
+    res = db.checkIfValidUser(args["email"], args["password"])
+    userCategories = ""
+    allCategories = db.getAllCategories()
+    if res:
+        userCategories = db.getUserCategories(args["email"])
+    return {"token": str(res), "checked": userCategories, "allCat":allCategories}, 200
+
+
+@api_blueprint.route('/signuUp', methods=['GET', 'POST'])
+def signUp():
+    print(request)
+    args = request.json
+    res = db.createNewUser(args["email"], args["password"], args["name"])
+    userCategories = ""
+    allCategories = db.getAllCategories()
+    return {"token": str(res), "checked": userCategories, "allCat":allCategories}, 200
+
+
+@api_blueprint.route('/selection', methods=['GET', 'POST'])
+def selection():
+    if request.method == 'POST':
+        args = request.json
+        print(args)
+        data = ("db", "1234", "VALORANT,League of Legends" , 1400)
+        data = "https://clips.twitch.tv/embed?clip=IcySparklyPieBCWarrior-uc8jRlxGER684i-2, https://clips.twitch.tv/embed?clip=IgnorantSourBulgogiKappa-aOypuRSQhb1da0MW, https://clips.twitch.tv/embed?clip=StormyTentativeGooseNerfBlueBlaster-fz6AoxMLgYa1bK4K, https://clips.twitch.tv/embed?clip=SingleDrabTigerKAPOW-psNF6qOiQWIFMvC9"
+        return {"links":data}, 200
+
+@api_blueprint.route('/query', methods=['GET', 'POST'])
+def query():
+    args = request.json
+    print("links")
+    data = "https://clips.twitch.tv/embed?clip=IcySparklyPieBCWarrior-uc8jRlxGER684i-2, https://clips.twitch.tv/embed?clip=IgnorantSourBulgogiKappa-aOypuRSQhb1da0MW, https://clips.twitch.tv/embed?clip=StormyTentativeGooseNerfBlueBlaster-fz6AoxMLgYa1bK4K, https://clips.twitch.tv/embed?clip=SingleDrabTigerKAPOW-psNF6qOiQWIFMvC9"
+    return {"links":data}, 200
+
+
+
+""" class auth_API(Resource):
 
     def get(self):
         args = auth_post_args.parse_args()
@@ -36,35 +73,9 @@ class auth_API(Resource):
         pass
 
     def patch(self):
-        pass
-
-example_blueprint = Blueprint('example_blueprint', __name__)
-
-@example_blueprint.route('/signIn', methods=['GET', 'POST'])
-def signIn():
-    print(request)
-    args = request.json
-    print(args)
-    return {"token": "00000000", "email":args["email"]}, 200
+        pass """
 
 
-@example_blueprint.route('/query', methods=['GET', 'POST'])
-def query():
-    if request.method == 'POST':
-        print(request)
-        args = request.json
-        print(args)
-        data = "https://clips.twitch.tv/embed?clip=IcySparklyPieBCWarrior-uc8jRlxGER684i-2, https://clips.twitch.tv/embed?clip=IgnorantSourBulgogiKappa-aOypuRSQhb1da0MW, https://clips.twitch.tv/embed?clip=StormyTentativeGooseNerfBlueBlaster-fz6AoxMLgYa1bK4K, https://clips.twitch.tv/embed?clip=SingleDrabTigerKAPOW-psNF6qOiQWIFMvC9"
-        return {"links":data}, 200
-    
-
-
-@example_blueprint.route('/querytwo', methods=['GET', 'POST'])
-def querytwo():
-    args = request.json
-    print("links")
-    data = "https://clips.twitch.tv/embed?clip=IcySparklyPieBCWarrior-uc8jRlxGER684i-2, https://clips.twitch.tv/embed?clip=IgnorantSourBulgogiKappa-aOypuRSQhb1da0MW, https://clips.twitch.tv/embed?clip=StormyTentativeGooseNerfBlueBlaster-fz6AoxMLgYa1bK4K, https://clips.twitch.tv/embed?clip=SingleDrabTigerKAPOW-psNF6qOiQWIFMvC9"
-    return {"links":data}, 200
 
 
 
