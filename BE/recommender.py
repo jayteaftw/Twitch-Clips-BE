@@ -95,7 +95,7 @@ def recommend(email):
 			 return
 		random.shuffle(urls)
 		print("__________________________")
-		print(urls)
+		#print(urls)
 		print("__________________________")
 		return urls
 	#return "https://clips.twitch.tv/embed?clip=StylishAmericanPepperoniPJSugar-73riKqxnVTKoGsxI, https://clips.twitch.tv/embed?clip=StormyTentativeGooseNerfBlueBlaster-fz6AoxMLgYa1bK4K, https://clips.twitch.tv/embed?clip=SleepyConsiderateCurryRuleFive-YxNspoxXoNAqxhCA"
