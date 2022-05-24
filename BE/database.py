@@ -10,8 +10,10 @@ class database():
             self.connection = sqlite3.connect('database.db')
             with open('schema.sql') as f:
                 self.connection.executescript(f.read()) #create tables
+            self.connection.close()
         else:
             self.connection = sqlite3.connect('database.db')
+            self.connection.close()
     '''
         def insert(self, tablename,data):
             try:
@@ -32,10 +34,18 @@ class database():
     '''
     def query(self, query):
         try:
-            cur = self.connection.cursor()
-            results = cur.execute(query)
+            connection = sqlite3.connect('database.db')
+            cur = connection.cursor()
+            cur.execute(query)
+            print(query)
+            results = cur.fetchall()
+            """ print("Results: " +  str(results)) """
+            connection.commit()
+            connection.close()
+            
             return results
         except Exception as e:
+            print("Except:", e)
             return(str(e))
         
     #def all_tags(self):
@@ -62,15 +72,21 @@ class database():
         If not return False """
 
         password1 = generate_password_hash(password, method = 'sha256')
-        sql = "SELECT * FROM User WHERE email = '%s' and password1 = '%s' LIMIT 1"
-        get_login_info = sql % (email, password1)
+        password1 = password
+        sql = "SELECT * FROM User WHERE email = '%s' LIMIT 1"
+        get_login_info = sql % (email)
         print("GET LOGIN INFO: " + get_login_info)
         data = self.query(get_login_info) #should return the login info from DB
-        if not data:
-            return False
-        else:
-            for row in data:
-                return row[4]
+        print("data:", data)
+        if data:
+            if check_password_hash(data[0][2], password1):
+                print("True")
+                for row in data:
+                    print(row[4])
+                    return row[4]
+        return False
+
+            
         
         
         #return True
@@ -81,19 +97,23 @@ class database():
             If user already exists in DB, return false
         """
         password1 = generate_password_hash(password, method = 'sha256')
-        sql = "SELECT * FROM User WHERE email = '%s' and password = '%s' and firstname = '%s' LIMIT 1"
-        insert_sql = "INSERT INTO User(email, password1, firstname, token, tags) VALUES (%s,%s,%s,%s)"
-        get_login_info = sql % (email, password1, name)
+        sql = "SELECT * FROM User WHERE email = '%s' LIMIT 1"
+        print(sql)
+        insert_sql = """INSERT INTO User(email, password1, firstname, token, tags) VALUES ('%s','%s','%s',"")"""
+        
+
+        get_login_info = sql % (email)
         print("GET LOGIN INFO: " + get_login_info)
         data = self.query(get_login_info) #should return the login info from DB
+        print("Data:" + str(data))
         if not data:
             #password1= generate_password_hash(password, method = 'sha256')
             token1= str(password1) + str(email) #passwordtest@gmail.com
-            insert_sql_query = insert_sql % (email, password1, name, token1, "")
+            insert_sql_query = f"INSERT INTO User(email, password1, firstname, token, tags) VALUES ('{str(email)}','{str(password1)}','{str(name)}','{str(token1)}','""')"
+            #insert_sql_query = insert_sql % (str(email), str(password1), str(name), str(token1))
             print(insert_sql_query)
             data = self.query(insert_sql_query)
-            for row in data:
-                return row[4]
+            return token1
         else:
             return False
             
@@ -109,21 +129,23 @@ class database():
         print("DATA: " + str(data))
         #data = [[1, 'test@gmail.com', 'test_password', 'VALORANT,APEX LEGENDS']]
         for row in data:
-            return row[3]
+            return row[5]
 
         #return ["Valorant", "CSGO", "Apex Legends", "League of Legends"]
 
     def getAllCategories(self):
         "Return a list of all categories"
+        return ["Valorant", "CSGO", "League of Legends", "Minecraft", "Apex Legends", "Call of Duty WarZone", "Among Us", "Dota 2", "World of Warcraft" ]
         categories = []
         sql = "SELECT DISTINCT tag FROM Twitch_URL"
         print("SQL: " + str(sql))
         data = self.query(sql)
+        print("Data:" + data)
         #data = [[1, 'VALORANT', 'www.twitch.tv...', '2022-05-22T20:53:31Z'],[2, 'APEX LEGENDS', 'www.twitch.tv...', '2022-05-22T20:53:31Z']]
         for row in data:
             categories.append(row[1])
         return categories
-        #return ["Valorant", "CSGO", "League of Legends", "Minecraft", "Apex Legends", "Call of Duty WarZone", "Among Us", "Dota 2", "World of Warcraft" ]
+        #
 
 
     def setUserCategories(self, categories, email):

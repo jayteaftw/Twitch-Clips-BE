@@ -20,7 +20,7 @@ def get_clips(tags): #user_id: int, tags: string
 	
 	'''Calculating time period '''
 	#print("NOW: " + str(now))
-	time_start_hour = int(now.hour) - 2
+	time_start_hour = int(now.hour) - 1
 	time_start = twitch_inst.convert_time_RC3339(now.year, now.month, now.day, time_start_hour, now.minute, now.second) 	
 	#print("TIME START: " + str(time_start))
 	time_end = twitch_inst.convert_time_RC3339(now.year, now.month, now.day, now.hour, now.minute, now.second)
