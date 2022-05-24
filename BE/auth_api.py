@@ -47,9 +47,9 @@ def query():
     args = request.json
     print("links")
     data = ""
-    """ if db.checkIfValidUser(args["email"], args["token"]):
-        data = recommend(args["email"]) """
-    data = "https://clips.twitch.tv/embed?clip=StylishAmericanPepperoniPJSugar-73riKqxnVTKoGsxI, https://clips.twitch.tv/embed?clip=StormyTentativeGooseNerfBlueBlaster-fz6AoxMLgYa1bK4K, https://clips.twitch.tv/embed?clip=SleepyConsiderateCurryRuleFive-YxNspoxXoNAqxhCA"
+    if db.checkIfValidUser(args["email"], args["token"]):
+        data = recommend(args["email"])
+    #data = "https://clips.twitch.tv/embed?clip=StylishAmericanPepperoniPJSugar-73riKqxnVTKoGsxI, https://clips.twitch.tv/embed?clip=StormyTentativeGooseNerfBlueBlaster-fz6AoxMLgYa1bK4K, https://clips.twitch.tv/embed?clip=SleepyConsiderateCurryRuleFive-YxNspoxXoNAqxhCA"
     return {"links":data}, 200
 
 
