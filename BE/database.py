@@ -106,6 +106,7 @@ class database():
         get_login_info = sql % (email)
         print("GET LOGIN INFO: " + get_login_info)
         data = self.query(get_login_info)
+        print("DATA: " + str(data))
         #data = [[1, 'test@gmail.com', 'test_password', 'VALORANT,APEX LEGENDS']]
         for row in data:
             return row[3]
