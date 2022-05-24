@@ -1,0 +1,14 @@
+CREATE TABLE IF NOT EXISTS User(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL UNIQUE,
+    password1 TEXT NOT NULL ,
+    firstname TEXT NOT NULL, 
+    token TEXT NOT NULL,
+    tags TEXT NOT NULL );
+    
+CREATE TABLE IF NOT EXISTS Twitch_URL(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    tag TEXT NOT NULL,
+    twitchurl TEXT,
+    currentdate DATETIME);
+
