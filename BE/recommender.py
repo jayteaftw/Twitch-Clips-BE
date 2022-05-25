@@ -8,10 +8,10 @@ from database import database
 import twitch_api
 import random
 
-get_latest_ts = "SELECT date FROM Twitch_URL WHERE tag = '%s' ORDER BY date DESC LIMIT 1"
-get_urls_from_Twitch_Url_db = "SELECT * FROM Twitch_URL WHERE tag = '%s' ORDER BY date LIMIT 30"
-get_game_names_from_Tag_db = "SELECT tags FROM User WHERE email = %s LIMIT 1"
-insert_Twitch_URL = "INSERT INTO Twitch_URL(tag, url, date) VALUES (%s,%s,%s)"
+get_latest_ts = "SELECT currentdate FROM Twitch_URL WHERE tag = '%s' ORDER BY currentdate DESC LIMIT 1"
+get_urls_from_Twitch_Url_db = "SELECT * FROM Twitch_URL WHERE tag = '%s' ORDER BY currentdate LIMIT 30"
+get_game_names_from_Tag_db = "SELECT tags FROM User WHERE email = '%s' LIMIT 1"
+insert_Twitch_URL = "INSERT INTO Twitch_URL(tag, url, date) VALUES ('%s','%s','%s')"
 db = database()
 
 def get_clips(tags): #user_id: int, tags: string
@@ -33,48 +33,50 @@ def get_clips(tags): #user_id: int, tags: string
 		print("GAME: " + str(game))
 		date_db_query = get_latest_ts % game
 		print("DATE DB QUERY: " + str(date_db_query))
-		#date_db_result = db.query(date_db_query)
-		
-		#date_comp = (now - date_db_result).total_seconds()
-		date_comp = 1600
-		if int(date_comp) < 1500 or date_comp == None: 
-			#if less than 5 min from most recent timestamp and current timestamp or no entries
-			#exist in DB, pull from DB
-			get_url_from_Twitch_Url_db_query = get_urls_from_Twitch_Url_db % (game)
-			print("GET URL FROM DB: " + get_url_from_Twitch_Url_db_query)
+		date_db_result = db.query(date_db_query)
+		print(date_db_result)
 
-			''' NEED TO BE TESTED
-			result = db.query(get_url_from_Twitch_Url_db_query) 
-			for row in result:
-				urls.append(row[3])
-			'''
+		#date_comp = 1600
+		if date_db_result != []:
+			print("Here: ",date_db_result)
+			date_comp = (now - date_db_result).total_seconds()
+			if int(date_comp) < 1500: 
+				#if less than 5 min from most recent timestamp and current timestamp or no entries
+				#exist in DB, pull from DB
+				get_url_from_Twitch_Url_db_query = get_urls_from_Twitch_Url_db % (game)
+				print("GET URL FROM DB: " + get_url_from_Twitch_Url_db_query)
 
 
-		else:
-			'''TWITCH API PART'''
-			print("game IN ELSE:" + str(game))
-			game_id = twitch_inst.get_game_ID(str(game)) #replaced with game_names
-			print("GAME_ID: " + str(game_id))
-			message = []
-			message = twitch_inst.get_game_clips(int(game_id), time_start, time_end)
-			#print(message.json()['data'][0])
+				result = db.query(get_url_from_Twitch_Url_db_query) 
+				for row in result:
+					urls.append(row[2])
+				continue
+			
 
-			for entry in message.json()['data']:
-				entry_id = entry['id']
-				entry_ts = entry['created_at'] # string type
-				entry_ts2 = datetime.strptime(entry_ts, '%Y-%m-%dT%H:%M:%SZ')
-				entry_url = entry['url']
-				#print("URL: " + str(entry_url))
-				entry_embed_url = entry['embed_url']
-				entry_thumbnail_url = entry['thumbnail_url']
-				entry_game_id = entry['game_id']
-				
-				urls.append(entry_embed_url)
+		'''TWITCH API PART'''
+		print("game IN ELSE:" + str(game))
+		game_id = twitch_inst.get_game_ID(str(game)) #replaced with game_names
+		print("GAME_ID: " + str(game_id))
+		message = []
+		message = twitch_inst.get_game_clips(int(game_id), time_start, time_end)
+		#print(message.json()['data'][0])
 
-				insert_query = insert_Twitch_URL % (game, entry_embed_url, entry_ts)
-				#print((game, entry_embed_url, entry_ts))
-				#print("INSERT QUERY: " + str(insert_query))
-				#db.insert("Twitch_URL", (game, entry_embed_url, entry_ts))
+		for entry in message.json()['data']:
+			entry_id = entry['id']
+			entry_ts = entry['created_at'] # string type
+			entry_ts2 = datetime.strptime(entry_ts, '%Y-%m-%dT%H:%M:%SZ')
+			entry_url = entry['url']
+			#print("URL: " + str(entry_url))
+			entry_embed_url = entry['embed_url']
+			entry_thumbnail_url = entry['thumbnail_url']
+			entry_game_id = entry['game_id']
+			
+			urls.append(entry_embed_url)
+
+			insert_query = insert_Twitch_URL % (game, entry_embed_url, entry_ts)
+			#print((game, entry_embed_url, entry_ts))
+			print("INSERT QUERY: " + str(insert_query))
+			db.query(insert_query)
 
 	#print("URLS: " + str(urls))
 	return urls #, games, dates
@@ -84,19 +86,18 @@ def recommend(email):
 	
 	get_tags_query = get_game_names_from_Tag_db % email
 	print("GET TAGS QUERY: " + get_tags_query)
-	#results = db.query(get_tags_query)
-	results = [[1, 'test@gmail.com', 'test_password', 'VALORANT,APEX LEGENDS']]
+	results = db.query(get_tags_query)
+	#results = [[1, 'test@gmail.com', 'test_password', 'VALORANT,APEX LEGENDS']]
+	print("results: ",results)
 	for row in results:
-		print("Tags: " + str(row[3]))
-		urls = get_clips(row[3])
+		
+		print("Tags: " + str(row[0]))
+		urls = get_clips(row[0])
 		print("URLS: " + str(urls))
 		if not urls:
 			 print("NO DATA IN URLS")
 			 return
 		random.shuffle(urls)
-		print("__________________________")
-		#print(urls)
-		print("__________________________")
 		return urls
 	#return "https://clips.twitch.tv/embed?clip=StylishAmericanPepperoniPJSugar-73riKqxnVTKoGsxI, https://clips.twitch.tv/embed?clip=StormyTentativeGooseNerfBlueBlaster-fz6AoxMLgYa1bK4K, https://clips.twitch.tv/embed?clip=SleepyConsiderateCurryRuleFive-YxNspoxXoNAqxhCA"
 
