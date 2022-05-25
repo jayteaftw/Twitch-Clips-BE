@@ -11,7 +11,7 @@ import random
 get_latest_ts = "SELECT currentdate FROM Twitch_URL WHERE tag = '%s' ORDER BY currentdate DESC LIMIT 1"
 get_urls_from_Twitch_Url_db = "SELECT * FROM Twitch_URL WHERE tag = '%s' ORDER BY currentdate LIMIT 30"
 get_game_names_from_Tag_db = "SELECT tags FROM User WHERE email = '%s' LIMIT 1"
-insert_Twitch_URL = "INSERT INTO Twitch_URL(tag, url, date) VALUES ('%s','%s','%s')"
+insert_Twitch_URL = "INSERT INTO Twitch_URL(tag, twitchurl, currentdate) VALUES ('%s','%s','%s')"
 db = database()
 
 def get_clips(tags): #user_id: int, tags: string
@@ -38,6 +38,8 @@ def get_clips(tags): #user_id: int, tags: string
 
 		#date_comp = 1600
 		if date_db_result != []:
+			date_db_result = date_db_result[0][0]
+			date_db_result = datetime.strptime(date_db_result, '%Y-%m-%dT%H:%M:%SZ') 
 			print("Here: ",date_db_result)
 			date_comp = (now - date_db_result).total_seconds()
 			if int(date_comp) < 1500: 
@@ -93,7 +95,7 @@ def recommend(email):
 		
 		print("Tags: " + str(row[0]))
 		urls = get_clips(row[0])
-		print("URLS: " + str(urls))
+		#print("URLS: " + str(urls))
 		if not urls:
 			 print("NO DATA IN URLS")
 			 return
